@@ -8,7 +8,7 @@ std::string parse_flag(char* arg);
 
 int main(int argc, char** argv)
 {
-    std::string input_file;
+    std::string input_file = "tests/part1/bad_char.mc";
     std::unordered_set<std::string> flags;
 
     // Parse arguments
@@ -30,7 +30,27 @@ int main(int argc, char** argv)
 
     // Run program based on flags
     if(flags.count("tokens"))
-        return Lexer::getInstance().run(input_file);
+    {
+        std::queue<Token>* tokens = Lexer(input_file).getTokens();
+
+        if(tokens == nullptr)
+            return 1;
+
+
+        while(!tokens->empty())
+        {
+            const Token& t = tokens->front();
+            std::string line;
+            line = std::to_string(t.line) + " " + t.kindName();
+            if(t.value != "")
+                line += " " + t.value;
+            line += "\n";
+            std::cout << line;
+            tokens->pop();
+        }
+
+        delete tokens;
+    }
     // TODO: ...
 
     return 0;
