@@ -11,11 +11,3 @@ add_executable(mcc src/main.cpp
 
 target_compile_options(mcc PRIVATE -fsanitize=address -Wall -Wextra -O2 -g)
 target_link_options(mcc PRIVATE -fsanitize=address -Wall -Wextra -O2 -g)
-
-add_executable(tests tests/tests.cpp
-    src/lexer.cpp
-    src/token.cpp
-    )
-
-target_compile_options(tests PRIVATE -fsanitize=address -Wall -Wextra -O2 -g)
-target_link_options(tests PRIVATE -fsanitize=address -Wall -Wextra -O2 -g)

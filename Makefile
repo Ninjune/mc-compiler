@@ -1,15 +1,14 @@
-BUILD_DIR := build
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
+SRCS = $(wildcard src/*.cpp)
+HDRS = $(wildcard src/*.h)
 
-.PHONY: all configure build clean
+mcc: $(SRCS) $(HDRS)
+	$(CXX) $(CXXFLAGS) -o $@ $(SRCS)
 
-all: build
-
-configure:
-	cmake -B $(BUILD_DIR) -S . -DCMAKE_CXX_COMPILER=$(CXX)
-
-build: configure
-	cmake --build $(BUILD_DIR)
-	cp build/mcc ./mcc
+#.PHONY: test clean
+.PHONY: clean
+#test: mcc
+#	bash run_tests.sh ./mcc ../../public-tests
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -f mcc

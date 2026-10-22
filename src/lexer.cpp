@@ -1,5 +1,6 @@
 // File: lexer.cpp
 #include "lexer.h"
+#include "util.h"
 
 static const std::unordered_map<std::string, Token::Kind> keywords = {
     {"int", Token::Kind::INT},   {"bool", Token::Kind::BOOL},
@@ -103,11 +104,13 @@ int Lexer::readFile()
 
     if (!file.is_open())
     {
-        error("Could not open the input file! Path: " + inputFilePath);
+        std::cerr << "Could not open the input file! Path: " << inputFilePath;
         return 1;
     }
 
-    std::stringstream ss; ss << file.rdbuf();
+    std::stringstream ss; 
+
+    ss << file.rdbuf();
     input = ss.str();
 
     file.close();
@@ -123,14 +126,18 @@ void Lexer::addToken(Token::Kind kind, std::string value)
 
 void Lexer::error(std::string s)
 {
-    std::string errorFilePath;
-    int end = inputFilePath.size()-1;
-    while(end >= 0 && inputFilePath[end] != '.') end--;
-    for(int i = 0; i <= end; i++) errorFilePath += inputFilePath[i];
-    errorFilePath += "err";
-    s = "error: line " + std::to_string(line) + ": " + s;
+    s = "error: line " + std::to_string(line) + ":\n";
 
     std::cerr << s << std::endl;
+    std::string errorFilePath = extractFileName(inputFilePath) + ".err";
+    std::ofstream file(errorFilePath);
+
+    if(!file.is_open())
+        std::cerr << "Could not open the input file! Path: " << inputFilePath;
+
+    file << s;
+
+    file.close();
 }
 
 

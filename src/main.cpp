@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_set>
 #include "lexer.h"
+#include "util.h"
 std::string parse_flag(char* arg);
 
 
@@ -36,20 +37,33 @@ int main(int argc, char** argv)
         if(tokens == nullptr)
             return 1;
 
-
+        std::string output = "";
         while(!tokens->empty())
         {
             const Token& t = tokens->front();
+
             std::string line;
             line = std::to_string(t.line) + " " + t.kindName();
             if(t.value != "")
                 line += " " + t.value;
             line += "\n";
-            std::cout << line;
+
+            output += line;
+
             tokens->pop();
         }
 
         delete tokens;
+
+        std::string tokensPath = extractFileName(input_file) + ".out";
+        std::ofstream file(tokensPath);
+
+        if(!file.is_open())
+            std::cerr << "Could not open the input file! Path: " << tokensPath;
+
+        file << output;
+
+        file.close();
     }
     // TODO: ...
 
