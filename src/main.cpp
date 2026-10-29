@@ -2,7 +2,8 @@
 #include <iostream>
 #include <string>
 #include <unordered_set>
-#include "lexer.h"
+#include "lexer/lexer.h"
+#include "parser/parser.h"
 #include "util.h"
 std::string parse_flag(char* arg);
 
@@ -65,6 +66,8 @@ int main(int argc, char** argv)
 
         file.close();
     }
+
+    std::cout << grammar.nullable().size();
     // TODO: ...
 
     return 0;

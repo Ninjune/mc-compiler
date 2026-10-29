@@ -7,7 +7,8 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <sstream>
-#include "token.h"
+#include "../token.h"
+#include "../util.h"
 
 
 class Lexer {
@@ -24,10 +25,10 @@ private:
 
     char peek(int ahead = 0) const { return curI + ahead < input.size() ? input[curI + ahead] : '\0'; }
     bool atEnd() const { return curI >= input.size(); }
-    bool skipTrivia();     // whitespace + comments; false on error
-    bool scanToken();      // one token; false on error
+    bool skipTrivia(); // whitespace + comments; false on error
+    bool scanToken(); // one token; false on error
 
-    void addToken(Token::Kind kind, std::string value = "");
+    void addToken(TokenKind kind, std::string value = "");
 
     std::string inputFilePath;
     int line = 1;
