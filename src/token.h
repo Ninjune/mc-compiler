@@ -8,12 +8,13 @@ enum TokenKind {
     IF, ELSE, WHILE, RETURN, TRUE, FALSE, PRINT, READ, 
     IDENT, NUM,
     PLUS, MINUS, STAR, SLASH, PERCENT, LT, LE, GT, GE, EQ, NE, AND, OR, NOT,
-    ASSIGN, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, SEMI, _EOF,
+    ASSIGN, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, SEMI, 
+    EPSILON, _EOF, 
 };
+std::string kindName(TokenKind k);
 
 class Token {
 public:
-    
     Token(int l, TokenKind k, std::string v = "") : line(l), kind(k), value(v) {}
     
     std::string kindName() const;

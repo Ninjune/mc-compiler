@@ -67,7 +67,23 @@ int main(int argc, char** argv)
         file.close();
     }
 
-    std::cout << grammar.nullable().size();
+    std::cout << "First: \n";
+    for(auto& r : grammar.getFirst())
+    {
+        std::cout << symToStr(r.first) << ": {";
+        for(auto& a : r.second)
+            std::cout << symToStr(a) << ", ";
+        std::cout << "}\n";
+    }
+    std::cout << "\nFollow: \n";
+    for(auto& r : grammar.getFollow())
+    {
+        std::cout << symToStr(r.first) << ": {";
+        for(auto& a : r.second)
+            std::cout << symToStr(a) << ", ";
+        std::cout << "}\n";
+    }
+    
     // TODO: ...
 
     return 0;

@@ -2,7 +2,7 @@
 #include "token.h"
 
 
-std::string Token::kindName() const
+std::string kindName(TokenKind kind)
 {
     switch(kind)
     {
@@ -39,7 +39,14 @@ std::string Token::kindName() const
         case TokenKind::RBRACE: return "RBRACE";
         case TokenKind::COMMA: return "COMMA";
         case TokenKind::SEMI: return "SEMI";
+        case TokenKind::EPSILON: return "ε";
         case TokenKind::_EOF: return "EOF";
     }
     return "";
+}
+
+
+std::string Token::kindName() const
+{
+    return ::kindName(kind);
 }
