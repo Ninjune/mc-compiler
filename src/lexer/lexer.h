@@ -21,8 +21,6 @@ private:
     int run();
     int readFile(); // populates input
 
-    void error(std::string s);
-
     char peek(int ahead = 0) const { return curI + ahead < input.size() ? input[curI + ahead] : '\0'; }
     bool atEnd() const { return curI >= input.size(); }
     bool skipTrivia(); // whitespace + comments; false on error

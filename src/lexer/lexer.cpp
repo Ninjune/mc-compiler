@@ -54,7 +54,7 @@ bool Lexer::skipTrivia()
             curI += 2;
             while (!(peek() == '*' && peek(1) == '/'))
             {
-                if (atEnd()) { line = startLine; error("unended comment"); return false; }
+                if (atEnd()) { line = startLine; error("unended comment", line); return false; }
                 if (peek() == '\n') line++;
                 curI++;
             }
@@ -85,7 +85,7 @@ bool Lexer::scanToken()
         while (isdigit((unsigned char)peek())) curI++;
         std::string digits = input.substr(start, curI - start);
         try { addToken(NUM, std::to_string(std::stoi(digits))); }
-        catch (const std::out_of_range&) { error("integer literal too large: " + digits); return false; }
+        catch (const std::out_of_range&) { error("integer literal too large: " + digits, line); return false; }
         return true;
     }
 
@@ -95,7 +95,7 @@ bool Lexer::scanToken()
     auto one = oneCharOps.find(c);
     if (one != oneCharOps.end()) { addToken(one->second); curI++; return true; }
 
-    error(std::string("unexpected character '") + c + "'");
+    error(std::string("unexpected character '") + c + "'", line);
     return false;
 }
 
@@ -124,24 +124,6 @@ int Lexer::readFile()
 void Lexer::addToken(TokenKind kind, std::string value)
 {
     output->push(Token(line, kind, value));
-}
-
-
-void Lexer::error(std::string s)
-{
-    s = "error: line " + std::to_string(line) + ":\n";
-
-    std::cerr << s << std::endl;
-    /*std::string errorFilePath = extractFileName(inputFilePath) + ".err";
-
-    std::ofstream file(errorFilePath);
-
-    if(!file.is_open())
-        std::cerr << "Could not open the input file! Path: " << inputFilePath;
-
-    file << s;
-
-    file.close();*/
 }
 
 

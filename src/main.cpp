@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include "lexer/lexer.h"
 #include "parser/parser.h"
+#include "astgraph/astgraph.h"
 #include "util.h"
 std::string parse_flag(char* arg);
 
@@ -56,7 +57,8 @@ int main(int argc, char** argv)
 
         delete tokens;
 
-        std::string tokensPath = extractFileName(input_file) + ".out";
+        std::cout << output << "\n";
+        /*std::string tokensPath = extractFileName(input_file) + ".out";
         std::ofstream file(tokensPath);
 
         if(!file.is_open())
@@ -64,9 +66,9 @@ int main(int argc, char** argv)
 
         file << output;
 
-        file.close();
+        file.close();*/
     }
-    else if (flags.count("tables"))
+    if (flags.count("tables"))
     {
         std::cout << "First: \n";
         for(auto& r : grammar.getFirst())
@@ -127,7 +129,18 @@ int main(int argc, char** argv)
             }
         }
     }
+    if (flags.count("ast"))
+    {
+        auto* tokens = Lexer(input_file).getTokens();
+        ASTNode* tree = Parser(tokens).getTree();
 
+        if(tree != nullptr)
+            if(!ASTGraph::render(tree, "ast.svg", "svg"))
+                std::cerr << "failed to write ast.dot\n";
+
+        delete tokens;
+        delete tree;   // deleting nullptr is fine
+    }
 
     // TODO: ...
 

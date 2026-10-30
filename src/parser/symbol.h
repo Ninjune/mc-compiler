@@ -47,7 +47,7 @@ enum NonTerminal
 typedef TokenKind Terminal;
 typedef std::variant<NonTerminal, Terminal> Symbol;
 
-std::string NTToStr(NonTerminal nt)
+inline std::string NTToStr(NonTerminal nt)
 {
     switch(nt)
     {
