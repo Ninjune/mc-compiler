@@ -9,24 +9,27 @@
 #include <iostream>
 
 
-typedef NTSymbol RuleLHS;
+typedef NonTerminal RuleLHS;
 typedef std::set<std::vector<Symbol>> RuleRHS;
 typedef std::pair<RuleLHS, RuleRHS> Rule;
 typedef std::unordered_map<RuleLHS, RuleRHS> Productions;
 typedef std::unordered_set<Symbol> NullableSet;
-typedef std::unordered_map<Symbol, std::unordered_set<TermSymbol>> FirstMap;
-typedef std::unordered_map<Symbol, std::unordered_set<TermSymbol>> FollowMap;
+typedef std::unordered_map<Symbol, std::unordered_set<Terminal>> FirstMap;
+typedef std::unordered_map<Symbol, std::unordered_set<Terminal>> FollowMap;
+typedef std::unordered_map<NonTerminal, std::unordered_map<Terminal, RuleRHS>> ParseMap;
 
 class Grammar {
 public:
     Grammar(Productions rules)
         : rules(rules), nullable(genNullable()),
-        first(genFirst()), follow(genFollow()) { }
-    Productions rules;
+        first(genFirst()), follow(genFollow()),
+        parse(genParse()) { }
 
+    Productions getRules() const { return rules; }
     NullableSet getNullable() const { return nullable; }
     FirstMap getFirst() const { return first; }
     FollowMap getFollow() const { return follow; }
+    ParseMap getParse() const { return parse; }
 private:
     NullableSet genNullable() const
     {
@@ -38,7 +41,7 @@ private:
             changed = false;
             for(unsigned int symbol = S; symbol < NTermSize; symbol++)
             {
-                NTSymbol nt = (NTSymbol)symbol;
+                NonTerminal nt = (NonTerminal)symbol;
                 // iter through
                 for(const auto& rhs : rules.at(nt))
                 {
@@ -68,10 +71,10 @@ private:
 
         // initialize terminals to themselves & NTs to empty
         for(int i = 0; i <= _EOF; i++)
-            first[(TermSymbol)i] = {(TermSymbol)i};
+            first[(Terminal)i] = {(Terminal)i};
 
         for(int i = S; i < NTermSize; i++)
-            first[(NTSymbol)i] = {};
+            first[(NonTerminal)i] = {};
 
         bool changed = true;
 
@@ -102,17 +105,17 @@ private:
                     // iter through the symbols
                     for(const Symbol& sym : alternate)
                     {
-                        if(std::holds_alternative<TermSymbol>(sym)) // Terminal
+                        if(std::holds_alternative<Terminal>(sym)) // Terminal
                         {
-                            const TermSymbol terminal = std::get<TermSymbol>(sym);
+                            const Terminal terminal = std::get<Terminal>(sym);
                             if(first[lhs].insert(terminal).second)
                                 changed = true;
                         }
                         else // NT
                     {
-                            const NTSymbol nonTerminal = std::get<NTSymbol>(sym);
+                            const NonTerminal nonTerminal = std::get<NonTerminal>(sym);
                             // put the terminals from the NT's first into this first set
-                            for(const TermSymbol terminal : first[nonTerminal])
+                            for(const Terminal terminal : first[nonTerminal])
                             {
                                 if(terminal == EPSILON)
                                     continue;
@@ -133,11 +136,11 @@ private:
         return first;
     }
 
-    std::set<TermSymbol> firstOfSymbolList(const std::vector<Symbol>& beta)
+    std::set<Terminal> firstOfSymbolList(const std::vector<Symbol>& beta) const
     {
-        std::set<TermSymbol> res;
+        std::set<Terminal> res;
         for (const Symbol& sym : beta) {
-            for (TermSymbol t : first.at(sym))
+            for (Terminal t : first.at(sym))
             if (t != EPSILON)
                 res.insert(t);
             if (!nullable.count(sym)) 
@@ -147,14 +150,13 @@ private:
         return res;
     }
 
-
-    FollowMap genFollow()
+    FollowMap genFollow() const
     {
         FollowMap follow;
 
         // initialize follow sets
         for(int i = S; i < NTermSize; i++)
-            follow[(NTSymbol)i] = {};
+            follow[(NonTerminal)i] = {};
 
         follow[S] = {_EOF};
 
@@ -173,10 +175,10 @@ private:
                     // for each nonterminal B in the production, update FOLLOW(B)
                     for(size_t i = 0; i < alternate.size(); ++i)
                     {
-                        if(!std::holds_alternative<NTSymbol>(alternate[i]))
+                        if(!std::holds_alternative<NonTerminal>(alternate[i]))
                             continue;
 
-                        const NTSymbol B = std::get<NTSymbol>(alternate[i]);
+                        const NonTerminal B = std::get<NonTerminal>(alternate[i]);
                         std::vector<Symbol> beta;
 
                         for(size_t j = i + 1; j < alternate.size(); ++j)
@@ -188,8 +190,8 @@ private:
                         {
                             // A -> alpha B beta, beta != epsilon:
                             // FOLLOW(B) := FOLLOW(B) U (FIRST(beta) - {epsilon})
-                            const std::set<TermSymbol> betaFirst = firstOfSymbolList(beta);
-                            for(const TermSymbol t : betaFirst)
+                            const std::set<Terminal> betaFirst = firstOfSymbolList(beta);
+                            for(const Terminal t : betaFirst)
                             {
                                 if(t == EPSILON)
                                     continue;
@@ -201,14 +203,14 @@ private:
                             // FOLLOW(B) := FOLLOW(B) U FOLLOW(A)
                             const auto followA = follow[lhs];
                             if(betaFirst.count(EPSILON))
-                                for(const TermSymbol t : followA)
+                                for(const Terminal t : followA)
                                     if(followB.insert(t).second)
                                         changed = true;
                         }
                         else // A -> alpha B: FOLLOW(B) := FOLLOW(B) U FOLLOW(A)
                         {
                             const auto followA = follow[lhs];
-                            for(const TermSymbol t : followA)
+                            for(const Terminal t : followA)
                                 if(followB.insert(t).second)
                                     changed = true;
                         }
@@ -220,9 +222,45 @@ private:
         return follow;
     }
 
+    ParseMap genParse() const 
+    {
+        // initialize M
+        ParseMap M;
+
+        for(int i = S; i < NTermSize; i++)
+            for(int j = 0; j <= _EOF; j++)
+                M[(NonTerminal)i][(Terminal)j] = {};
+
+        // for each A ∈ N
+        for(int i = S; i < NTermSize; i++)
+        {
+            NonTerminal A = (NonTerminal)i;
+            const RuleRHS& alternates = rules.at(A);
+            // for each production A → α
+            for(const std::vector<Symbol>& alpha : alternates)
+            {
+                // if a ∈ FIRST(α)
+                auto firstAlpha = firstOfSymbolList(alpha);
+
+                // and a != ε
+                for(const Terminal& a : firstAlpha)
+                    if(a != EPSILON)
+                        M[A][a].insert(alpha); // then M[A, a] = M[A, a] ∪ {α}
+
+                if(firstAlpha.count(EPSILON)) // if ε ∈ FIRST(α)
+                    for (const Terminal& b : follow.at(A)) // then for each b ∈ FOLLOW(A)
+                        M[A][b].insert(alpha); // M[A, b] = M[A, b] ∪ {α}
+            }
+        }
+
+        return M;
+    }
+
+    Productions rules;
     NullableSet nullable;
     FirstMap first;
     FollowMap follow;
+    ParseMap parse;
 };
 
 static const Grammar grammar({

@@ -5,7 +5,7 @@
 #include <variant>
 #include <vector>
 
-enum NTSymbol
+enum NonTerminal
 {
     S,
     Program,
@@ -44,10 +44,10 @@ enum NTSymbol
     NTermSize
 };
 
-typedef TokenKind TermSymbol;
-typedef std::variant<NTSymbol, TermSymbol> Symbol;
+typedef TokenKind Terminal;
+typedef std::variant<NonTerminal, Terminal> Symbol;
 
-std::string NTToStr(NTSymbol nt)
+std::string NTToStr(NonTerminal nt)
 {
     switch(nt)
     {
@@ -92,8 +92,8 @@ std::string NTToStr(NTSymbol nt)
 
 inline std::string symToStr(Symbol s)
 {
-    if(std::holds_alternative<NTSymbol>(s))
-        return NTToStr(std::get<NTSymbol>(s));
+    if(std::holds_alternative<NonTerminal>(s))
+        return NTToStr(std::get<NonTerminal>(s));
     else
-        return kindName(std::get<TermSymbol>(s));
+        return kindName(std::get<Terminal>(s));
 }

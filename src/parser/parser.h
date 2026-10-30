@@ -24,8 +24,6 @@ public:
 private:
     void genTree();
 
-    void genParseTable();
-
     std::queue<Token>* input;
     ASTNode* output;
 };

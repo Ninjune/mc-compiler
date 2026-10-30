@@ -66,24 +66,69 @@ int main(int argc, char** argv)
 
         file.close();
     }
+    else if (flags.count("tables"))
+    {
+        std::cout << "First: \n";
+        for(auto& r : grammar.getFirst())
+        {
+            std::cout << symToStr(r.first) << ": {";
+            bool first = true;
+            for(auto& a : r.second)
+            {
+                if(!first) std::cout << ", ";
+                std::cout << symToStr(a);
+                first = false;
+            }
+            std::cout << "}\n";
+        }
 
-    std::cout << "First: \n";
-    for(auto& r : grammar.getFirst())
-    {
-        std::cout << symToStr(r.first) << ": {";
-        for(auto& a : r.second)
-            std::cout << symToStr(a) << ", ";
-        std::cout << "}\n";
+        std::cout << "\nFollow: \n";
+        for(auto& r : grammar.getFollow())
+        {
+            std::cout << symToStr(r.first) << ": {";
+            bool first = true;
+            for(auto& a : r.second)
+            {
+                if(!first) std::cout << ", ";
+                std::cout << symToStr(a);
+                first = false;
+            }
+            std::cout << "}\n";
+        }
+
+        std::cout << "\nParse table: \n";
+        for(auto& nTerm : grammar.getParse())
+        {
+            std::string A = symToStr(nTerm.first);
+            for(auto& term : nTerm.second)
+            {
+                if(term.second.empty()) continue;
+                std::string a = symToStr(term.first);
+
+                std::cout << "M(" << A << ", " << a << "): {";
+                bool firstAlt = true;
+                for(auto& alternate : term.second)
+                {
+                    if(!firstAlt) std::cout << ", ";
+                    std::cout << "[";
+                    bool firstSym = true;
+                    if(alternate.empty())
+                        std::cout << "ε";
+                    for(auto& sym : alternate)
+                    {
+                        if(!firstSym) std::cout << " ";
+                        std::cout << symToStr(sym);
+                        firstSym = false;
+                    }
+                    std::cout << "]";
+                    firstAlt = false;
+                }
+                std::cout << "}\n";
+            }
+        }
     }
-    std::cout << "\nFollow: \n";
-    for(auto& r : grammar.getFollow())
-    {
-        std::cout << symToStr(r.first) << ": {";
-        for(auto& a : r.second)
-            std::cout << symToStr(a) << ", ";
-        std::cout << "}\n";
-    }
-    
+
+
     // TODO: ...
 
     return 0;

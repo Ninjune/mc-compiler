@@ -10,6 +10,8 @@ enum TokenKind {
     PLUS, MINUS, STAR, SLASH, PERCENT, LT, LE, GT, GE, EQ, NE, AND, OR, NOT,
     ASSIGN, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, SEMI, 
     EPSILON, _EOF, 
+    // note: epsilon will never be lexed, only used for the parser as
+    // these are the same as terminals
 };
 std::string kindName(TokenKind k);
 
