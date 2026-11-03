@@ -7,7 +7,7 @@
 
 namespace {
 
-std::string labelFor(const BTNode* n)
+std::string labelFor(const Node* n)
 {
     std::string label = symToStr(n->symbol);
     if(n->token.has_value())
@@ -15,23 +15,25 @@ std::string labelFor(const BTNode* n)
     return label;
 }
 
-bool isTerminal(const BTNode* n)
+bool isTerminal(const Node* n)
 {
     return std::holds_alternative<Terminal>(n->symbol);
 }
 
-Agraph_t* build(const BTNode* root)
+Agraph_t* build(const Node* root)
 {
     Agraph_t* g = agopen(const_cast<char*>("ast"), Agdirected, nullptr);
 
-    // declare attribute defaults before creating nodes
+    // ordering=out: out-edges are placed in creation order, so children
+    // appear left to right in the same order as the vector
     agattr(g, AGRAPH, const_cast<char*>("ordering"), const_cast<char*>("out"));
-    agattr(g, AGNODE, const_cast<char*>("label"),    const_cast<char*>(""));
-    agattr(g, AGNODE, const_cast<char*>("shape"),    const_cast<char*>("ellipse"));
-    agattr(g, AGNODE, const_cast<char*>("style"),    const_cast<char*>(""));
+
+    agattr(g, AGNODE, const_cast<char*>("label"), const_cast<char*>(""));
+    agattr(g, AGNODE, const_cast<char*>("shape"), const_cast<char*>("ellipse"));
+    agattr(g, AGNODE, const_cast<char*>("style"), const_cast<char*>(""));
 
     int counter = 0;
-    auto makeNode = [&](const BTNode* n) {
+    auto makeNode = [&](const Node* n) {
         std::string name = "n" + std::to_string(counter++);
         Agnode_t* gn = agnode(g, const_cast<char*>(name.c_str()), 1);
         agset(gn, const_cast<char*>("label"),
@@ -44,7 +46,7 @@ Agraph_t* build(const BTNode* root)
         return gn;
     };
 
-    std::stack<std::pair<const BTNode*, Agnode_t*>> work;
+    std::stack<std::pair<const Node*, Agnode_t*>> work;
     work.push({root, makeNode(root)});
 
     while(!work.empty())
@@ -52,9 +54,7 @@ Agraph_t* build(const BTNode* root)
         auto [node, gnode] = work.top();
         work.pop();
 
-        // children = left, then the right-sibling chain; edges are created
-        // in order so `ordering=out` keeps them left to right
-        for(const BTNode* c = node->left; c != nullptr; c = c->right)
+        for(const Node* c : node->children)
         {
             Agnode_t* gc = makeNode(c);
             agedge(g, gnode, gc, nullptr, 1);
@@ -66,7 +66,7 @@ Agraph_t* build(const BTNode* root)
 
 } // namespace
 
-bool ASTGraph::writeDot(const BTNode* root, const std::string& path)
+bool ASTGraph::writeDot(const Node* root, const std::string& path)
 {
     if(root == nullptr) return false;
 
@@ -80,7 +80,7 @@ bool ASTGraph::writeDot(const BTNode* root, const std::string& path)
     return rc == 0;
 }
 
-bool ASTGraph::render(const BTNode* root, const std::string& path, const char* format)
+bool ASTGraph::render(const Node* root, const std::string& path, const char* format)
 {
     if(root == nullptr) return false;
 

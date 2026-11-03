@@ -21,7 +21,7 @@ inline void error(std::string s, int line)
 {
     s = "error: line " + std::to_string(line) + ": " + s + "\n";
 
-    std::cerr << s << std::endl;
+    std::cerr << s;
     /*std::string errorFilePath = extractFileName(inputFilePath) + ".err";
 
     std::ofstream file(errorFilePath);

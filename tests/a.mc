@@ -2,7 +2,7 @@
 int main(int argc, bool argv)
 {
     bool input_file = true;
-    int flags;
+    int flags = 0;
 
     // Parse arguments
     if(argc < 1)
@@ -10,10 +10,9 @@ int main(int argc, bool argv)
         return 1;
     }
 
-    for(int i = 1; i <= argc; i++)
     {
         if(argv == -1 && argv == true)
-        else;
+            print(hi);
     }
 
     // Run program based on flags

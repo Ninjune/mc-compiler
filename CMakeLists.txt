@@ -17,5 +17,6 @@ add_executable(mcc src/main.cpp
 target_include_directories(mcc PRIVATE ${GVC_INCLUDE_DIRS})
 target_link_libraries(mcc PRIVATE ${GVC_LIBRARIES})
 
-target_compile_options(mcc PRIVATE -fsanitize=address -Wall -Wextra -O2 -g)
-target_link_options(mcc PRIVATE -fsanitize=address -Wall -Wextra -O2 -g)
+# -fsanitize=address
+target_compile_options(mcc PRIVATE -Wall -Wextra -O2 -g)
+target_link_options(mcc PRIVATE -Wall -Wextra -O2 -g)

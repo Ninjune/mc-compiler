@@ -132,14 +132,18 @@ int main(int argc, char** argv)
     if (flags.count("ast"))
     {
         auto* tokens = Lexer(input_file).getTokens();
-        ASTNode* tree = Parser(tokens).getTree();
+        Parser p = Parser(tokens);
+        Node* tree = p.getTree();
 
         if(tree != nullptr)
+        {
             if(!ASTGraph::render(tree, "ast.svg", "svg"))
                 std::cerr << "failed to write ast.dot\n";
+            std::cout << p.getString() << std::endl;
+        }
 
         delete tokens;
-        delete tree;   // deleting nullptr is fine
+        delete tree;
     }
 
     // TODO: ...

@@ -8,46 +8,91 @@
 #include "grammar.h"
 #include "../util.h"
 
-class BTNode
+class Node
 {
 public:
-    BTNode(int line, Symbol s)
+    Node(int line, Symbol s)
         : lineNum(line), symbol(s) {}
-    ~BTNode()
-    {
-        delete left;
-        delete right;
-    }
-    BTNode(const BTNode&) = delete;
-    BTNode& operator=(const BTNode&) = delete;
 
-    BTNode *left = nullptr;
-    BTNode *right = nullptr;
+    ~Node()
+    {
+        for(unsigned int i = 0; i < children.size(); i++)
+            delete children[i];
+    }
+
+    Node(const Node&) = delete;
+    Node& operator=(const Node&) = delete;
+
+    std::vector<Node*> children;
     int lineNum;
     Symbol symbol;
-    std::optional<Token> token;
+    std::optional<Token> token; // only has if its a terminal
 };
+
+struct SyntaxError { std::string msg; int line; };
 
 class Parser {
 public:
-    Parser(std::queue<Token>* in)
-        : input(in) { output = genTree(); }
+    Parser(std::queue<Token>* in) : input(in) { output = parse(); }
 
-    BTNode* getTree() { return output; } // caller owns the tree
+    Node* getTree() { return output; } // caller owns the tree
+    std::string getString() { return getString(output); }
 private:
-    struct StackEntry { Symbol sym; BTNode* node; };
+    std::string getString(Node* node);
+    Node* parse();
 
-    BTNode* genTree();
-    BTNode* CSTToAST(BTNode* ast);
-    BTNode* failGen(BTNode* root, const std::string& msg, int line);
-    StackEntry TopOfStack() { return stack.top(); }
-    Token NextToken();
-    void Push(const std::vector<Symbol>& sl, BTNode* parent, int line);
-    void Pop() { stack.pop(); }
+    // token helpers
+    const Token& peek() const { return input->front(); }
+    Token next();
+    Token expect(Terminal k);
+    void fail(const std::string& expected);
 
+    std::string nodeToStr(Node* n);
+
+    // tree helpers
+    Node* leaf(const Token& t);
+    Node* node(NonTerminal nt, int line, const std::vector<Node*>& kids);
+
+    // one function per nonterminal, in grammar order
+    Node* parseS();
+    Node* parseProgram();
+    void  parseFunDecls(Node* parent);
+    Node* parseFunDecl();
+    Node* parseParamsOpt();
+    void  parseParams(Node* parent);
+    void  parseParamsTail(Node* parent);
+    Node* parseParam();
+    Node* parseType();
+    Node* parseBlock();
+    void  parseItems(Node* parent);
+    Node* parseItem();
+    Node* parseDecl();
+    Node* parseStmt();
+    Node* parseStmtRest(Node* name);
+    Node* parseElsePart();
+    Node* parseArgsOpt();
+    void  parseArgs(Node* parent);
+    void  parseArgsTail(Node* parent);
+    Node* parseExp();
+    Node* parseExpTail(Node* lhs);
+    Node* parseAndExp();
+    Node* parseAndTail(Node* lhs);
+    Node* parseEqExp();
+    Node* parseEqTail(Node* lhs);
+    Node* parseRelExp();
+    Node* parseRelTail(Node* lhs);
+    Node* parseAddExp();
+    Node* parseAddTail(Node* lhs);
+    Node* parseMulExp();
+    Node* parseMulTail(Node* lhs);
+    Node* parseUnary();
+    Node* parsePrimary();
+    Node* parseCallRest(Node* name);
+
+    bool holdsAtom(const Node* n);
+    std::string spell(Terminal k);
+    std::string spell(const Token& t);
+   
     std::queue<Token>* input;
-    BTNode* output;
-
-    std::stack<StackEntry> stack;
-    ParseMap parseTable = grammar.getParse();
+    Node* output;
 };

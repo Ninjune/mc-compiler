@@ -47,7 +47,8 @@ enum NonTerminal
 typedef TokenKind Terminal;
 typedef std::variant<NonTerminal, Terminal> Symbol;
 
-inline std::string NTToStr(NonTerminal nt)
+namespace {
+std::string NTToStr(NonTerminal nt)
 {
     switch(nt)
     {
@@ -90,10 +91,54 @@ inline std::string NTToStr(NonTerminal nt)
     return "error";
 }
 
+std::string TToStr(Terminal t)
+{
+    switch(t)
+    {
+    case INT: return "int";
+    case BOOL: return "bool";
+    case IF: return "if";
+    case ELSE: return "else";
+    case WHILE: return "while";
+    case RETURN: return "return";
+    case TRUE: return "true";
+    case FALSE: return "false";
+    case PRINT: return "print";
+    case READ: return "read";
+    case IDENT: return "id";
+    case NUM: return "num";
+    case PLUS: return "+";
+    case MINUS: return "-";
+    case STAR: return "*";
+    case SLASH: return "/";
+    case PERCENT: return "%";
+    case LT: return "<";
+    case LE: return "<=";
+    case GT: return ">";
+    case GE: return ">=";
+    case EQ: return "==";
+    case NE: return "!=";
+    case AND: return "&&";
+    case OR: return "||";
+    case NOT: return "!";
+    case ASSIGN: return "assign";
+    case LPAREN: return "(";
+    case RPAREN: return ")";
+    case LBRACE: return "{";
+    case RBRACE: return "}";
+    case COMMA: return ",";
+    case SEMI: return ";";
+    case EPSILON: return "EPS";
+    case _EOF: return "end of file";
+    }
+    return "";
+}
+}
+
 inline std::string symToStr(Symbol s)
 {
     if(std::holds_alternative<NonTerminal>(s))
         return NTToStr(std::get<NonTerminal>(s));
     else
-        return kindName(std::get<Terminal>(s));
+        return TToStr(std::get<Terminal>(s));
 }
