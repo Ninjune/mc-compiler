@@ -1,6 +1,5 @@
 #include "parser.h"
 
-// How a terminal is spelled in an error message. Adjust to your TokenKind names.
 std::string Parser::spell(Terminal k)
 {
     return "'" + symToStr(k) + "'";
@@ -14,7 +13,6 @@ std::string Parser::spell(const Token& t)
 }
 
 // ---- driver / helpers ------------------------------------------------------
-// Diagram key: a parent's children are listed left to right beneath it.
 std::string Parser::nodeToStr(Node* n)
 {
     if(std::holds_alternative<NonTerminal>(n->symbol))
@@ -46,7 +44,7 @@ std::string Parser::getString(Node* node)
 {
     if(node == nullptr)
         return "";
-    if(holdsAtom(node))
+    if(holdsLeaf(node))
         return nodeToStr(node);
 
     std::string out = "(" + nodeToStr(node);
@@ -419,21 +417,7 @@ void Parser::parseArgsTail(Node* parent)
     parseArgsTail(parent);
 }
 
-/*
-Every binary level builds the same shape, folded to the left.
 
-   a + b:           a - b - c  =  (a - b) - c:
-
-       +                    -
-      / \                  / \
-     a   b                -   c
-                         / \
-                        a   b
-
-A finished operator node becomes the left operand of the next one.
-
-Exp -> AndExp ExpTail
-*/
 Node* Parser::parseExp()
 {
     return parseExpTail(parseAndExp());
@@ -557,14 +541,14 @@ Node* Parser::parsePrimary()
             return leaf(next());
         case IDENT:
             return parseCallRest(leaf(next())); // plain variable or a call
-        case READ: // READ ( )      a single READ node with no children
+        case READ: // READ ( ) a single READ node with no children
         {
             Node* keyword = leaf(next());
             expect(LPAREN);
             expect(RPAREN);
             return keyword;
         }
-        case LPAREN: // ( Exp )     grouping only, no node of its own
+        case LPAREN: // ( Exp ) grouping only, no node of its own
         {
             next();
             Node* e = parseExp();
@@ -577,7 +561,7 @@ Node* Parser::parsePrimary()
 }
 
 /*
-CallRest -> ( ArgsOpt ) | eps      (IDENT was already consumed: `name`)
+CallRest -> ( ArgsOpt ) | eps (IDENT was already consumed: `name`)
 With no '(' the identifier is just a variable and comes back unchanged.
 
          CallRest
@@ -597,7 +581,7 @@ Node* Parser::parseCallRest(Node* name)
 }
 
 
-bool Parser::holdsAtom(const Node* n)
+bool Parser::holdsLeaf(const Node* n)
 {
     return n->children.empty() &&
            std::holds_alternative<Terminal>(n->symbol) &&

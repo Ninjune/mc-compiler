@@ -89,7 +89,7 @@ private:
     Node* parsePrimary();
     Node* parseCallRest(Node* name);
 
-    bool holdsAtom(const Node* n);
+    bool holdsLeaf(const Node* n);
     std::string spell(Terminal k);
     std::string spell(const Token& t);
    
