@@ -1,5 +1,6 @@
 // File: util.h
 #pragma once
+#define DETAILED_ERRORS false
 #include <string>
 #include <iostream>
 
@@ -19,7 +20,7 @@ inline std::string extractFileName(std::string path)
 
 inline void error(std::string s, int line)
 {
-    s = "error: line " + std::to_string(line) + ": " + s + "\n";
+    s = "error: line " + std::to_string(line) + ":" + (DETAILED_ERRORS ? " " + s : "") + "\n";
 
     std::cerr << s;
     /*std::string errorFilePath = extractFileName(inputFilePath) + ".err";

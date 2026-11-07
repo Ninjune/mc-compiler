@@ -1,3 +1,4 @@
+// if there are compile time issues, use the tables in grammar
 #pragma once
 #include <string>
 #include <unordered_map>
@@ -7,6 +8,7 @@
 #include <optional>
 #include "grammar.h"
 #include "../util.h"
+
 
 class Node
 {
@@ -29,7 +31,9 @@ public:
     std::optional<Token> token; // only has if its a terminal
 };
 
+
 struct SyntaxError { std::string msg; int line; };
+
 
 class Parser {
 public:

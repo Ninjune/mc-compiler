@@ -4,7 +4,6 @@
 #include <unordered_set>
 #include "lexer/lexer.h"
 #include "parser/parser.h"
-#include "astgraph/astgraph.h"
 #include "util.h"
 std::string parse_flag(char* arg);
 
@@ -114,8 +113,10 @@ int main(int argc, char** argv)
                     if(!firstAlt) std::cout << ", ";
                     std::cout << "[";
                     bool firstSym = true;
+
                     if(alternate.empty())
                         std::cout << "ε";
+
                     for(auto& sym : alternate)
                     {
                         if(!firstSym) std::cout << " ";
@@ -137,8 +138,8 @@ int main(int argc, char** argv)
 
         if(tree != nullptr)
         {
-            if(!ASTGraph::render(tree, "ast.svg", "svg"))
-                std::cerr << "failed to write ast.dot\n";
+            //if(!ASTGraph::render(tree, "ast.svg", "svg"))
+            //    std::cerr << "failed to write ast.svg\n";
             std::cout << p.getString() << std::endl;
         }
 

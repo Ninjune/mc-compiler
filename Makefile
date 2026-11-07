@@ -1,6 +1,6 @@
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
-SRCS = $(wildcard src/*.cpp)
-HDRS = $(wildcard src/*.h)
+SRCS = $(wildcard src*/*.cpp) $(wildcard src/*/*.cpp)
+HDRS = $(wildcard src/*.h $(wildcard src/*/*.h))
 
 mcc: $(SRCS) $(HDRS)
 	$(CXX) $(CXXFLAGS) -o $@ $(SRCS)

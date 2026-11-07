@@ -1,9 +1,11 @@
 #include "parser.h"
 
+
 std::string Parser::spell(Terminal k)
 {
     return "'" + symToStr(k) + "'";
 }
+
 
 std::string Parser::spell(const Token& t)
 {
@@ -12,7 +14,8 @@ std::string Parser::spell(const Token& t)
     return spell(t.kind);
 }
 
-// ---- driver / helpers ------------------------------------------------------
+
+// driver / helpers 
 std::string Parser::nodeToStr(Node* n)
 {
     if(std::holds_alternative<NonTerminal>(n->symbol))
@@ -122,7 +125,7 @@ static Node* opNode(Node* op, Node* lhs, Node* rhs)
 }
 
 // recursive descent parser
-// S -> Program _EOF        (returns the Program node; _EOF is dropped)
+// S -> Program _EOF (returns the Program node. _EOF is dropped)
 Node* Parser::parseS()
 {
     Node* prog = parseProgram();
@@ -350,7 +353,7 @@ Node* Parser::parseStmt()
     }
 }
 
-// StmtRest -> = Exp ; | ( ArgsOpt ) ;     (IDENT was already consumed: `name`)
+// StmtRest -> = Exp ; | ( ArgsOpt ) ; (IDENT was already consumed: `name`)
 Node* Parser::parseStmtRest(Node* name)
 {
     if(peek().kind == ASSIGN)
@@ -374,7 +377,7 @@ Node* Parser::parseStmtRest(Node* name)
     fail("'=' or '('");
 }
 
-// ElsePart -> ELSE Stmt | eps      (returns the else-Stmt, or nullptr)
+// ElsePart -> ELSE Stmt | eps
 // Taking ELSE whenever it is next is what binds it to the nearest IF.
 Node* Parser::parseElsePart()
 {
@@ -385,7 +388,7 @@ Node* Parser::parseElsePart()
 }
 
 /*
-ArgsOpt -> Args | eps          (FOLLOW = { ) })
+ArgsOpt -> Args | eps
 The Args node always exists, even with no arguments.
 
           Args                  Args (empty)
@@ -407,7 +410,7 @@ void Parser::parseArgs(Node* parent)
     parseArgsTail(parent);
 }
 
-// ArgsTail -> , Exp ArgsTail | eps      (FOLLOW = { ) })
+// ArgsTail -> , Exp ArgsTail | eps
 void Parser::parseArgsTail(Node* parent)
 {
     if(peek().kind != COMMA)
@@ -455,7 +458,7 @@ Node* Parser::parseEqExp()
     return parseEqTail(parseRelExp());
 }
 
-// EqTail -> EQ RelExp | NE RelExp | eps      (at most one; not chained)
+// EqTail -> EQ RelExp | NE RelExp | eps (at most one; not chained)
 Node* Parser::parseEqTail(Node* lhs)
 {
     if(peek().kind != EQ && peek().kind != NE)
@@ -562,7 +565,7 @@ Node* Parser::parsePrimary()
 
 /*
 CallRest -> ( ArgsOpt ) | eps (IDENT was already consumed: `name`)
-With no '(' the identifier is just a variable and comes back unchanged.
+with no '(' the identifier is just a variable and comes back unchanged.
 
          CallRest
          /      \

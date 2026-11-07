@@ -1,13 +1,12 @@
 // File: astgraph.cpp
+#ifdef BUILD_GRAPHVIZ
+
 #include "astgraph.h"
-#include <graphviz/gvc.h>
 #include <cstdio>
 #include <stack>
 #include <utility>
 
-namespace {
-
-std::string labelFor(const Node* n)
+std::string ASTGraph::labelFor(const Node* n)
 {
     std::string label = symToStr(n->symbol);
     if(n->token.has_value())
@@ -15,12 +14,12 @@ std::string labelFor(const Node* n)
     return label;
 }
 
-bool isTerminal(const Node* n)
+bool ASTGraph::isTerminal(const Node* n)
 {
     return std::holds_alternative<Terminal>(n->symbol);
 }
 
-Agraph_t* build(const Node* root)
+Agraph_t* ASTGraph::build(const Node* root)
 {
     Agraph_t* g = agopen(const_cast<char*>("ast"), Agdirected, nullptr);
 
@@ -64,8 +63,6 @@ Agraph_t* build(const Node* root)
     return g;
 }
 
-} // namespace
-
 bool ASTGraph::writeDot(const Node* root, const std::string& path)
 {
     if(root == nullptr) return false;
@@ -97,3 +94,5 @@ bool ASTGraph::render(const Node* root, const std::string& path, const char* for
     gvFreeContext(gvc);
     return rc == 0;
 }
+
+#endif 
