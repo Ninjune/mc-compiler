@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include "lexer/lexer.h"
 #include "parser/parser.h"
+#include "astgraph/astgraph.h"
 #include "util.h"
 std::string parse_flag(char* arg);
 
@@ -133,15 +134,19 @@ int main(int argc, char** argv)
     if (flags.count("ast"))
     {
         auto* tokens = Lexer(input_file).getTokens();
+
+        if(tokens == nullptr)
+            return 1;
+
         Parser p = Parser(tokens);
         Node* tree = p.getTree();
 
-        if(tree != nullptr)
-        {
-            //if(!ASTGraph::render(tree, "ast.svg", "svg"))
-            //    std::cerr << "failed to write ast.svg\n";
-            std::cout << p.getString() << std::endl;
-        }
+        if(tree == nullptr)
+            return 1;
+
+        if(!ASTGraph::render(tree, "ast.svg", "svg"))
+            std::cerr << "failed to write ast.svg\n";
+        std::cout << p.getString() << std::endl;
 
         delete tokens;
         delete tree;

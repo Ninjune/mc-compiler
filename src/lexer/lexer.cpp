@@ -125,5 +125,3 @@ void Lexer::addToken(TokenKind kind, std::string value)
 {
     output->push(Token(line, kind, value));
 }
-
-

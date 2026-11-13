@@ -1,7 +1,7 @@
 // File: astgraph.cpp
-#ifdef BUILD_GRAPHVIZ
-
 #include "astgraph.h"
+
+#ifdef BUILD_GRAPHVIZ
 #include <cstdio>
 #include <stack>
 #include <utility>

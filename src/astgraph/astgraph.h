@@ -1,6 +1,6 @@
 // File: astgraph.h
 
-//#define BUILD_GRAPHVIZ
+#define BUILD_GRAPHVIZ
 
 #ifdef BUILD_GRAPHVIZ
 
