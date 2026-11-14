@@ -1,11 +1,10 @@
 // File: stable.h
 #pragma once
+#include <list>
 #include <optional>
-#include <stack>
 #include <unordered_map>
 #include <variant>
 #include <string>
-typedef bool Marker;
 
 
 class STable {
@@ -15,11 +14,11 @@ public:
         BOOL
     };
     void bind();
-    std::optional<Type> lookup();
-    enter();
+    std::optional<Type> lookup(std::string symbol);
 
+    void enter();
     // pop all until a marker
-    exit();
+    void exit();
 private:
-    std::stack<std::unordered_map<std::string, Type>> table;
+    std::list<std::unordered_map<std::string, Type>> table;
 };

@@ -74,7 +74,7 @@ private:
     Node* parseStmt();
     Node* parseStmtRest(Node* name);
     Node* parseElsePart();
-    Node* parseArgsOpt();
+    void  parseArgsOpt(Node* parent);
     void  parseArgs(Node* parent);
     void  parseArgsTail(Node* parent);
     Node* parseExp();

@@ -389,18 +389,15 @@ Node* Parser::parseElsePart()
 
 /*
 ArgsOpt -> Args | eps
-The Args node always exists, even with no arguments.
 
-          Args                  Args (empty)
+           parent
          /  |  \
       Exp  Exp  ...
 */
-Node* Parser::parseArgsOpt()
+void Parser::parseArgsOpt(Node* parent)
 {
-    Node* args = new Node(peek().line, Args);
     if(peek().kind != RPAREN)
-        parseArgs(args);
-    return args;
+        parseArgs(parent);
 }
 
 // Args -> Exp ArgsTail
@@ -567,20 +564,19 @@ Node* Parser::parsePrimary()
 CallRest -> ( ArgsOpt ) | eps (IDENT was already consumed: `name`)
 with no '(' the identifier is just a variable and comes back unchanged.
 
-         CallRest
-         /      \
-      IDENT    Args
-              /  |  \
-           Exp  Exp  ...
+              CallRest
+         /      |  \     \
+       IDENT   Exp  Exp  ...
 */
 Node* Parser::parseCallRest(Node* name)
 {
     if(peek().kind != LPAREN)
         return name;
     next();
-    Node* args = parseArgsOpt();
+    Node* callrest = node(CallRest, name->lineNum, {name});
+    parseArgsOpt(callrest);
     expect(RPAREN);
-    return node(CallRest, name->lineNum, {name, args});
+    return callrest;
 }
 
 
