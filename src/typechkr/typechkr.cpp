@@ -7,14 +7,14 @@ void TypeChkr::run()
 {
     STable* ftable = new STable();
 
-    recurse(tree, ftable);
+    recurse(tree, ftable, nullptr);
 }
 
 
 void TypeChkr::recurse(Node* tree, STable* ftable, STable* vtable)
 {
     tree->ftable = ftable;
-    tree->vtable = new STable(vtable);
+    //tree->vtable = new STable(vtable);
 
     for(Node* child : tree->children)
     {
