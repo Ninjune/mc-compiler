@@ -18,7 +18,6 @@ public:
     std::optional<Type> lookup(std::string symbol);
 
     void enter();
-    // pop all until a marker
     void exit();
 private:
     std::list<std::unordered_map<std::string, Type>> table;

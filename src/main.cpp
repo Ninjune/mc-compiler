@@ -5,6 +5,7 @@
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "astgraph/astgraph.h"
+#include "typechkr/typechkr.h"
 #include "util.h"
 std::string parse_flag(char* arg);
 
@@ -158,13 +159,17 @@ int main(int argc, char** argv)
         if(tokens == nullptr)
             return 1;
 
-        Parser p = Parser(tokens);
-        Node* tree = p.getTree();
+        Node* tree = Parser(tokens).getTree();
 
         if(tree == nullptr)
             return 1;
 
-        //std::cout << "OK\n";
+        bool err = TypeChecker(tree).getError();
+
+        if(!err)
+            std::cout << "OK\n";
+        else
+            return 1;
 
         delete tokens;
         delete tree;

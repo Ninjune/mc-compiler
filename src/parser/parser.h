@@ -11,7 +11,6 @@
 
 struct SyntaxError { std::string msg; int line; };
 
-
 class Parser {
 public:
     Parser(std::queue<Token>* in) : input(in) { output = parse(); }

@@ -3,9 +3,11 @@
 
 bool STable::bind(std::string s, Type t)
 {
-    if(table.back().count(s))
+    if(table.front().count(s))
         return false;
-    table.back()[s] = t;
+
+    table.front()[s] = t;
+
     return true;
 }
 
@@ -21,11 +23,11 @@ std::optional<STable::Type> STable::lookup(std::string symbol)
 
 void STable::enter()
 {
-    table.push_back(std::unordered_map<std::string, STable::Type>());
+    table.push_front(std::unordered_map<std::string, STable::Type>());
 }
 
 
 void STable::exit()
 {
-    table.pop_back();
+    table.pop_front();
 }

@@ -24,6 +24,7 @@ public:
     int lineNum;
     Symbol symbol;
     std::optional<Token> token; // only has if its a terminal
+    std::optional<STable::Type> type;
 
     STable* ftable = nullptr;
     STable* vtable = nullptr;

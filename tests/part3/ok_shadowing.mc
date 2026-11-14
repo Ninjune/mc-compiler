@@ -7,7 +7,7 @@ int f(int a) {
 }
 
 int main() {
-    int f = 3;            // a variable may share a function's name
+    int f = 3; // a variable may share a function's name
     print(f(f));
     return 0;
 }
