@@ -143,6 +143,8 @@ Node* Parser::parseProgram()
 {
     Node* prog = new Node(peek().line, Program);
     parseFunDecls(prog);
+    if(prog->children.size() < 1) // empty program
+        fail("function");
     return prog;
 }
 

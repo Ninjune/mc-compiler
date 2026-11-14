@@ -144,10 +144,12 @@ int main(int argc, char** argv)
 
         if(tree == nullptr)
             return 1;
+
         #ifdef BUILD_GRAPHVIZ
         if(!ASTGraph::render(tree, "ast.svg", "svg"))
             std::cerr << "failed to write ast.svg\n";
         #endif
+
         std::cout << p.getString() << std::endl;
 
         delete tokens;
