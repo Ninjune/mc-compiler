@@ -25,7 +25,7 @@ private:
     const Token& peek() const { return input->front(); }
     Token next();
     Token expect(Terminal k);
-    void fail(const std::string& expected);
+    [[noreturn]] void fail(const std::string& expected);
 
     std::string nodeToStr(Node* n);
 
