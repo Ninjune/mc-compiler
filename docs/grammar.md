@@ -69,8 +69,8 @@ MulExp → Unary MulTail
 MulTail → * Unary MulTail | / Unary MulTail
     | % Unary MulTail | ε
 Unary → - Unary | ! Unary | Primary
-Primary → NUM | true | false | ID CallRest | read ( ) | ( Exp )
-CallRest → ( ArgsOpt ) | ε
+Primary → NUM | true | false | ID Call | read ( ) | ( Exp )
+Call → ( ArgsOpt ) | ε
 
 ## generated tables for the above grammar:
 
@@ -141,14 +141,14 @@ Unary: {NOT, MINUS, TRUE, FALSE, READ, IDENT, NUM, LPAREN}
 RBRACE: {RBRACE}
 Primary: {LPAREN, NUM, IDENT, READ, FALSE, TRUE}
 COMMA: {COMMA}
-CallRest: {LPAREN, ε}
+Call: {LPAREN, ε}
 SEMI: {SEMI}
 ε: {ε}
 EOF: {EOF}
 S: {EOF, BOOL, INT}
 
 Follow: 
-CallRest: {GE, SEMI, GT, STAR, SLASH, RPAREN, PERCENT, NE, OR, AND, PLUS, MINUS, EQ, LT, LE, COMMA}
+Call: {GE, SEMI, GT, STAR, SLASH, RPAREN, PERCENT, NE, OR, AND, PLUS, MINUS, EQ, LT, LE, COMMA}
 Primary: {NE, OR, AND, PERCENT, SLASH, RPAREN, STAR, PLUS, MINUS, EQ, LT, LE, COMMA, GT, SEMI, GE}
 Unary: {PLUS, MINUS, EQ, STAR, SLASH, RPAREN, PERCENT, LT, LE, COMMA, GT, SEMI, GE, AND, OR, NE}
 MulTail: {PLUS, MINUS, EQ, NE, OR, RPAREN, AND, GE, SEMI, GT, COMMA, LE, LT}
@@ -184,25 +184,25 @@ AddExp: {EQ, NE, OR, RPAREN, AND, GE, SEMI, GT, COMMA, LE, LT}
 AddTail: {LT, LE, COMMA, GT, SEMI, GE, AND, RPAREN, OR, NE, EQ}
 
 Parse table: 
-M(CallRest, SEMI): {[ε]}
-M(CallRest, COMMA): {[ε]}
-M(CallRest, PLUS): {[ε]}
-M(CallRest, MINUS): {[ε]}
-M(CallRest, STAR): {[ε]}
-M(CallRest, SLASH): {[ε]}
-M(CallRest, PERCENT): {[ε]}
-M(CallRest, LT): {[ε]}
-M(CallRest, LE): {[ε]}
-M(CallRest, GT): {[ε]}
-M(CallRest, GE): {[ε]}
-M(CallRest, EQ): {[ε]}
-M(CallRest, NE): {[ε]}
-M(CallRest, AND): {[ε]}
-M(CallRest, OR): {[ε]}
-M(CallRest, LPAREN): {[LPAREN ArgsOpt RPAREN]}
-M(CallRest, RPAREN): {[ε]}
+M(Call, SEMI): {[ε]}
+M(Call, COMMA): {[ε]}
+M(Call, PLUS): {[ε]}
+M(Call, MINUS): {[ε]}
+M(Call, STAR): {[ε]}
+M(Call, SLASH): {[ε]}
+M(Call, PERCENT): {[ε]}
+M(Call, LT): {[ε]}
+M(Call, LE): {[ε]}
+M(Call, GT): {[ε]}
+M(Call, GE): {[ε]}
+M(Call, EQ): {[ε]}
+M(Call, NE): {[ε]}
+M(Call, AND): {[ε]}
+M(Call, OR): {[ε]}
+M(Call, LPAREN): {[LPAREN ArgsOpt RPAREN]}
+M(Call, RPAREN): {[ε]}
 M(Primary, NUM): {[NUM]}
-M(Primary, IDENT): {[IDENT CallRest]}
+M(Primary, IDENT): {[IDENT Call]}
 M(Primary, READ): {[READ LPAREN RPAREN]}
 M(Primary, FALSE): {[FALSE]}
 M(Primary, TRUE): {[TRUE]}

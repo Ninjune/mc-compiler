@@ -13,7 +13,8 @@ public:
         INT,
         BOOL
     };
-    void bind();
+
+    bool bind(std::string s, Type t);
     std::optional<Type> lookup(std::string symbol);
 
     void enter();

@@ -151,6 +151,24 @@ int main(int argc, char** argv)
         delete tokens;
         delete tree;
     }
+    if (flags.count("check"))
+    {
+        auto* tokens = Lexer(input_file).getTokens();
+
+        if(tokens == nullptr)
+            return 1;
+
+        Parser p = Parser(tokens);
+        Node* tree = p.getTree();
+
+        if(tree == nullptr)
+            return 1;
+
+        //std::cout << "OK\n";
+
+        delete tokens;
+        delete tree;
+    }
 
     // TODO: ...
 

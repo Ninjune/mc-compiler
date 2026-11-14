@@ -3,8 +3,10 @@
 
 Test layout (sibling files next to each *.mc test):
   - *.out  -> expected stdout. Run mcc with --tokens, or --ast when the
-              expected output starts with "(program".
-  - *.err  -> expected stderr. Run mcc with --ast.
+              expected output starts with "(program", or --check for
+              part3's OK tests.
+  - *.err  -> expected stderr. Run mcc with --ast (or --check for part3's
+              error tests, handled in main).
   - no sibling -> not a test.
 
 Each test also asserts the compiler's exit code:
@@ -50,13 +52,19 @@ def run_mcc(
     )
 
 
-def expected_flags(expected_text: str) -> list[str]:
-    """Pick the flag from the expected output shape:
+def dirname(mc: Path) -> str:
+    """Part directory name for a test, or "" if it is not in a part dir."""
+    return mc.parent.name
 
-    - AST dumps start with "(program", so use --ast.
-    - token dumps start with a line number, so use --tokens.
-    """
-    return ["--ast"] if expected_text.startswith("(") else ["--tokens"]
+
+def expected_flags(expected_text: str, mc: Path) -> list[str]:
+    if dirname(mc) == "part1":
+        return ["--tokens"]
+    if dirname(mc) == "part2":
+        return ["--ast"]
+    if dirname(mc) == "part3":
+        return ["--check"]
+    return []
 
 
 def discover_tests(tests_dir: Path) -> list[Path]:
@@ -91,7 +99,7 @@ def main() -> int:
 
         if out_path.exists():
             expected: str = out_path.read_text()
-            flags = expected_flags(expected)
+            flags = expected_flags(expected, mc)
             proc = run_mcc(mcc, mc, flags)
             if normalize(proc.stdout) == normalize(expected) and proc.returncode == 0:
                 passed += 1
@@ -107,7 +115,8 @@ def main() -> int:
                     print(f"      stderr:   {proc.stderr!r}")
         elif err_path.exists():
             expected_err: str = err_path.read_text()
-            proc = run_mcc(mcc, mc, ["--ast"])
+            flags = ["--check"] if dirname(mc) == "part3" else ["--ast"]
+            proc = run_mcc(mcc, mc, flags)
             if proc.stderr == expected_err and proc.returncode == 1:
                 passed += 1
                 print(f"PASS  {mc.relative_to(TESTS_DIR)}")

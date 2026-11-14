@@ -1,6 +1,6 @@
 // File: symbol.h
 #pragma once
-#include "../token.h"
+#include "token.h"
 #include <unordered_map>
 #include <variant>
 #include <vector>
@@ -40,7 +40,7 @@ enum NonTerminal
     MulTail,
     Unary,
     Primary,
-    CallRest,
+    Call,
     NTermSize
 };
 
@@ -85,7 +85,7 @@ std::string NTToStr(NonTerminal nt)
         case MulTail: return "MulTail";
         case Unary: return "Unary";
         case Primary: return "Primary";
-        case CallRest: return "CallRest";
+        case Call: return "Call";
         case NTermSize: return "NTermSize";
     }
     return "error";

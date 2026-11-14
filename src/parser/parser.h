@@ -5,31 +5,8 @@
 #include <vector>
 #include <queue>
 #include <stack>
-#include <optional>
-#include "grammar.h"
 #include "../util.h"
-
-
-class Node
-{
-public:
-    Node(int line, Symbol s)
-        : lineNum(line), symbol(s) {}
-
-    ~Node()
-    {
-        for(unsigned int i = 0; i < children.size(); i++)
-            delete children[i];
-    }
-
-    Node(const Node&) = delete;
-    Node& operator=(const Node&) = delete;
-
-    std::vector<Node*> children;
-    int lineNum;
-    Symbol symbol;
-    std::optional<Token> token; // only has if its a terminal
-};
+#include "../node.h"
 
 
 struct SyntaxError { std::string msg; int line; };
@@ -91,7 +68,7 @@ private:
     Node* parseMulTail(Node* lhs);
     Node* parseUnary();
     Node* parsePrimary();
-    Node* parseCallRest(Node* name);
+    Node* parseCall(Node* name);
 
     bool holdsLeaf(const Node* n);
     std::string spell(Terminal k);

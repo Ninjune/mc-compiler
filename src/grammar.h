@@ -329,9 +329,9 @@ static const Grammar grammar({
         {NUM}, 
         {TRUE}, 
         {FALSE}, 
-        {IDENT, CallRest}, 
+        {IDENT, Call}, 
         {READ, LPAREN, RPAREN}, 
         {LPAREN, Exp, RPAREN}
     }},
-    {CallRest, {{LPAREN, ArgsOpt, RPAREN}, {}}},
+    {Call, {{LPAREN, ArgsOpt, RPAREN}, {}}},
 });

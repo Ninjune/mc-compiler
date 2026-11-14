@@ -29,7 +29,7 @@ std::string Parser::nodeToStr(Node* n)
             case Block:    return "block";
             case Decl:     return "decl";
             case Args:     return "args";
-            case CallRest: return "call";
+            case Call:     return "call";
             default:       return symToStr(n->symbol);
         }
     }
@@ -370,7 +370,7 @@ Node* Parser::parseStmtRest(Node* name)
     }
     if(peek().kind == LPAREN)
     {
-        Node* call = parseCallRest(name); // call statement; tree is shown there
+        Node* call = parseCall(name); // call statement; tree is shown there
         expect(SEMI);
         return call;
     }
@@ -532,7 +532,7 @@ Node* Parser::parseUnary()
     return parsePrimary();
 }
 
-// Primary -> NUM | TRUE | FALSE | IDENT CallRest | READ ( ) | ( Exp )
+// Primary -> NUM | TRUE | FALSE | IDENT Call | READ ( ) | ( Exp )
 Node* Parser::parsePrimary()
 {
     switch(peek().kind)
@@ -540,7 +540,7 @@ Node* Parser::parsePrimary()
         case NUM: case TRUE: case FALSE: // a single leaf
             return leaf(next());
         case IDENT:
-            return parseCallRest(leaf(next())); // plain variable or a call
+            return parseCall(leaf(next())); // plain variable or a call
         case READ: // READ ( ) a single READ node with no children
         {
             Node* keyword = leaf(next());
@@ -561,19 +561,19 @@ Node* Parser::parsePrimary()
 }
 
 /*
-CallRest -> ( ArgsOpt ) | eps (IDENT was already consumed: `name`)
+Call -> ( ArgsOpt ) | eps (IDENT was already consumed: `name`)
 with no '(' the identifier is just a variable and comes back unchanged.
 
-              CallRest
+              Call
          /      |  \     \
        IDENT   Exp  Exp  ...
 */
-Node* Parser::parseCallRest(Node* name)
+Node* Parser::parseCall(Node* name)
 {
     if(peek().kind != LPAREN)
         return name;
     next();
-    Node* callrest = node(CallRest, name->lineNum, {name});
+    Node* callrest = node(Call, name->lineNum, {name});
     parseArgsOpt(callrest);
     expect(RPAREN);
     return callrest;
