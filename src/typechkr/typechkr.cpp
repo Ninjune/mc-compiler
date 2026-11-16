@@ -57,6 +57,7 @@ void TypeChecker::checkProgram()
         checkFun(f);
 }
 
+
 void TypeChecker::checkFun(Node* fun)
 {
     currentReturn = typeOf(fun->children[0]);
@@ -77,6 +78,7 @@ void TypeChecker::checkFun(Node* fun)
     if (!alwaysReturns(body))
         fail(fun, "function '" + idName(fun->children[1]) + "' may reach the end without returning");
 }
+
 
 void TypeChecker::checkStmt(Node* stmt)
 {
@@ -119,7 +121,7 @@ void TypeChecker::checkStmt(Node* stmt)
             auto vt = vtable.lookup(x);
 
             if (!vt) 
-                    fail(stmt, "undeclared variable '" + x + "'");
+                fail(stmt, "undeclared variable '" + x + "'");
 
             Type rhs = checkExp(stmt->children[1]);
 
@@ -153,6 +155,7 @@ void TypeChecker::checkStmt(Node* stmt)
 
     fail(stmt, "internal error: unexpected statement node");
 }
+
 
 TypeChecker::Type TypeChecker::checkExp(Node* exp)
 {
@@ -212,6 +215,7 @@ TypeChecker::Type TypeChecker::checkExp(Node* exp)
     fail(exp, "internal error: unexpected expression node");
 }
 
+
 TypeChecker::Type TypeChecker::checkCall(Node* call)
 {
     const std::string& f = idName(call->children[0]);
@@ -242,6 +246,7 @@ TypeChecker::Type TypeChecker::checkCall(Node* call)
 
 }
 
+
 bool TypeChecker::alwaysReturns(const Node* s) 
 {
     if (isT(s, RETURN)) 
@@ -257,6 +262,7 @@ bool TypeChecker::alwaysReturns(const Node* s)
 
     return false;
 }
+
 
 void TypeChecker::fail(const Node* n, const std::string& msg)
 {

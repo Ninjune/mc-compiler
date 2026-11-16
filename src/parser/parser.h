@@ -13,7 +13,7 @@ struct SyntaxError { std::string msg; int line; };
 
 class Parser {
 public:
-    Parser(std::queue<Token>* in) : input(in) { output = parse(); }
+    Parser(std::queue<Token>* in) : input(in) { output = parse(); delete input; }
 
     Node* getTree() { return output; } // caller owns the tree
     std::string getString() { return getString(output); }

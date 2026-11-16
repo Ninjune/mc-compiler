@@ -57,7 +57,7 @@ def dirname(mc: Path) -> str:
     return mc.parent.name
 
 
-def expected_flags(expected_text: str, mc: Path) -> list[str]:
+def expected_flags(mc: Path) -> list[str]:
     if dirname(mc) == "part1":
         return ["--tokens"]
     if dirname(mc) == "part2":
@@ -99,7 +99,7 @@ def main() -> int:
 
         if out_path.exists():
             expected: str = out_path.read_text()
-            flags = expected_flags(expected, mc)
+            flags = expected_flags(mc)
             proc = run_mcc(mcc, mc, flags)
             if normalize(proc.stdout) == normalize(expected) and proc.returncode == 0:
                 passed += 1
