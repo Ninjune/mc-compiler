@@ -44,11 +44,13 @@ def run_mcc(
     mcc: Any,
     source: Any,
     flags: list[str],
+    stdin: str | None = None,
 ) -> subprocess.CompletedProcess[Any]:
     return subprocess.run(
         [str(mcc), str(source), *flags],
         capture_output=True,
         text=True,
+        input=stdin,
     )
 
 
@@ -65,8 +67,18 @@ def expected_flags(mc: Path) -> list[str]:
     if dirname(mc) == "part3":
         return ["--check"]
     if dirname(mc) == "part4":
-        return ["--ir"]
+        return ["--run-ir"]
     return []
+
+
+def read_input(mc: Path) -> str | None:
+    """Sibling .in file contents to feed as stdin, or None if there is none.
+
+    Part4 programs read input with read(); the matching .in file provides it
+    so the test takes no interactive input.
+    """
+    in_path: Path = mc.parent / (mc.stem + ".in")
+    return in_path.read_text() if in_path.exists() else None
 
 
 def discover_tests(tests_dir: Path) -> list[Path]:
@@ -102,7 +114,7 @@ def main() -> int:
         if out_path.exists():
             expected: str = out_path.read_text()
             flags = expected_flags(mc)
-            proc = run_mcc(mcc, mc, flags)
+            proc = run_mcc(mcc, mc, flags, read_input(mc))
             if normalize(proc.stdout) == normalize(expected) and proc.returncode == 0:
                 passed += 1
                 print(f"PASS  {mc.relative_to(TESTS_DIR)}")
