@@ -6,12 +6,13 @@
 #include "parser/parser.h"
 #include "astgraph/astgraph.h"
 #include "typechkr/typechkr.h"
-#include "util.h"
 std::string parse_flag(char* arg);
 int tokens(std::string input_file);
 int tables();
 int ast(std::string input_file);
 int check(std::string input_file);
+int ir(std::string input_file);
+int runir(std::string input_file);
 int ir(std::string input_file);
 int runir(std::string input_file);
 
@@ -200,6 +201,52 @@ int check(std::string input_file)
     return 0;
 }
 
+int ir(std::string input_file)
+{
+    auto* tokens = Lexer(input_file).getTokens();
+
+    if(tokens == nullptr)
+        return 1;
+
+    Node* tree = Parser(tokens).getTree();
+
+    if(tree == nullptr)
+        return 1;
+
+    bool err = TypeChecker(tree).getError();
+
+    if(err)
+        return 1;
+
+    // TODO: add ir stuff
+
+    delete tree;
+    return 0;
+}
+
+int runir(std::string input_file)
+{
+    auto* tokens = Lexer(input_file).getTokens();
+
+    if(tokens == nullptr)
+        return 1;
+
+    Node* tree = Parser(tokens).getTree();
+
+    if(tree == nullptr)
+        return 1;
+
+    bool err = TypeChecker(tree).getError();
+
+    if(err)
+        return 1;
+
+    // TODO: add ir stuff
+
+    delete tree;
+
+    return 0;
+}
 
 std::string parse_flag(char* arg)
 {

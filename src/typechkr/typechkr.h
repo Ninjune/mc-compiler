@@ -10,7 +10,10 @@ struct TypeError {
 
 class TypeChecker {
 public:
-    typedef STable::Type Type;
+    enum class Type {
+        INT,
+        BOOL
+    };
     TypeChecker(Node* in) : prog(in) { run(); }
 
     bool getError() { return err; };
@@ -22,7 +25,7 @@ private:
     static const std::string& idName(const Node* n) { return n->token->value; }
     static const char* name(Type t) { return t == Type::INT ? "int" : "bool"; }
 
-    Type record(Node* n, Type t) { n->type = t; return t; }
+    Type record(Node* n, Type t) { return t; }
 
     static bool alwaysReturns(const Node* s);
 
@@ -58,8 +61,8 @@ private:
     Type checkCall(Node* c);
 
     Node* prog;
-    STable ftable;
-    STable vtable;
+    STable<Type> ftable;
+    STable<Type> vtable;
     Type currentReturn = Type::INT;
     bool err = false;
     std::unordered_map<std::string, std::vector<Type>> paramTypes;

@@ -1,6 +1,7 @@
 // File: stable.cpp
 #include "stable.h"
 
+
 bool STable::bind(std::string s, Type t)
 {
     if(table.front().count(s))
@@ -11,6 +12,7 @@ bool STable::bind(std::string s, Type t)
     return true;
 }
 
+
 std::optional<STable::Type> STable::lookup(std::string symbol)
 {
     for(auto& r : table)
@@ -19,6 +21,7 @@ std::optional<STable::Type> STable::lookup(std::string symbol)
 
     return std::nullopt;
 }
+
 
 
 void STable::enter()

@@ -7,18 +7,16 @@
 #include <string>
 
 
+template<typename T>
 class STable {
 public:
-    enum Type {
-        INT,
-        BOOL
-    };
+    
 
-    bool bind(std::string s, Type t);
-    std::optional<Type> lookup(std::string symbol);
+    bool bind(std::string s, T t);
+    std::optional<T> lookup(std::string symbol);
 
     void enter();
     void exit();
 private:
-    std::list<std::unordered_map<std::string, Type>> table;
+    std::list<std::unordered_map<std::string, T>> table;
 };

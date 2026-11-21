@@ -64,6 +64,8 @@ def expected_flags(mc: Path) -> list[str]:
         return ["--ast"]
     if dirname(mc) == "part3":
         return ["--check"]
+    if dirname(mc) == "part4":
+        return ["--ir"]
     return []
 
 
