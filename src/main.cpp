@@ -12,6 +12,8 @@ int tokens(std::string input_file);
 int tables();
 int ast(std::string input_file);
 int check(std::string input_file);
+int ir(std::string input_file);
+int runir(std::string input_file);
 
 
 int main(int argc, char** argv)
@@ -42,11 +44,13 @@ int main(int argc, char** argv)
     if (flags.count("tables"))
         return tables();
     if (flags.count("ast"))
-    {
-            }
+        return ast(input_file);
     if (flags.count("check"))
-    {
-    }
+        return check(input_file);
+    if (flags.count("ir"))
+        return ir(input_file);
+    if (flags.count("run-ir"))
+        return runir(input_file);
 
     // TODO: ...
 

@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 4.1)
 project(mc-compiler LANGUAGES CXX)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GVC REQUIRED libgvc libcgraph)
+# find_package(PkgConfig REQUIRED)
+# pkg_check_modules(GVC REQUIRED libgvc libcgraph)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,8 +11,8 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 add_executable(mcc ${SOURCES})
 
-target_include_directories(mcc PRIVATE ${GVC_INCLUDE_DIRS})
-target_link_libraries(mcc PRIVATE ${GVC_LIBRARIES})
+# target_include_directories(mcc PRIVATE ${GVC_INCLUDE_DIRS})
+# target_link_libraries(mcc PRIVATE ${GVC_LIBRARIES})
 
 # -fsanitize=address
 target_compile_options(mcc PRIVATE -Wall -Wextra -O2 -g)
