@@ -2,18 +2,21 @@
 #pragma once
 #include "../node.h"
 
-struct TypeError {
+struct TypeError
+{
     int line;
     std::string msg;
 };
 
-class TypeChecker {
+class TypeChecker
+{
 public:
-    enum class Type {
-        INT,
-        BOOL
-    };
-    TypeChecker(Node* in) : prog(in) { run(); }
+    enum class Type { INT, BOOL };
+    TypeChecker(Node* in)
+        : prog(in)
+    {
+        run();
+    }
 
     bool getError() { return err; };
 private:
@@ -26,12 +29,12 @@ private:
 
     static bool alwaysReturns(const Node* s);
 
-    static Type typeOf(const Node* typeNode) 
+    static Type typeOf(const Node* typeNode)
     {
         return typeNode->isSym(INT) ? Type::INT : Type::BOOL;
     }
 
-    void expect(Node* e, Type want, const std::string& what) 
+    void expect(Node* e, Type want, const std::string& what)
     {
         Type got = checkExp(e);
 

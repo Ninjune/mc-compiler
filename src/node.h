@@ -8,18 +8,16 @@ class Node
 {
 public:
     Node(int line, Symbol s)
-        : lineNum(line), symbol(s) {}
+        : lineNum(line), symbol(s)
+    {}
 
     ~Node()
     {
-        for(unsigned int i = 0; i < children.size(); i++)
-            delete children[i];
+        for (auto& i : children)
+            delete i;
     }
 
-    bool isSym(Symbol a) const
-    {
-        return symbol == a;
-    }
+    bool isSym(Symbol a) const { return symbol == a; }
 
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;

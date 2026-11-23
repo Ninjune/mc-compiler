@@ -1,32 +1,34 @@
 // File: lexer.h
 #pragma once
-#include <iostream>
-#include <fstream>
 #include <queue>
 #include <string>
-#include <unordered_set>
-#include <unordered_map>
-#include <sstream>
+#include <utility>
 #include "../token.h"
-#include "../util.h"
 
 
-class Lexer {
+class Lexer
+{
 public:
     Lexer(std::string path)
-        : inputFilePath(path) { run(); }
+        : inputFilePath(std::move(path))
+    {
+        run();
+    }
 
     std::queue<Token>* getTokens() { return output; };
 private:
     int run();
     int readFile(); // populates input
 
-    char peek(int ahead = 0) const { return curI + ahead < input.size() ? input[curI + ahead] : '\0'; }
-    bool atEnd() const { return curI >= input.size(); }
+    [[nodiscard]] char peek(int ahead = 0) const
+    {
+        return curI + ahead < input.size() ? input[curI + ahead] : '\0';
+    }
+    [[nodiscard]] bool atEnd() const { return curI >= input.size(); }
     bool skipTrivia(); // whitespace + comments; false on error
-    bool scanToken(); // one token; false on error
+    bool scanToken();  // one token; false on error
 
-    void addToken(TokenKind kind, std::string value = "");
+    void addToken(TokenKind kind, const std::string& value = "");
 
     std::string inputFilePath;
     int line = 1;

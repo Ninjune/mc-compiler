@@ -1,19 +1,29 @@
 // if there are compile time issues, use the tables in grammar
 #pragma once
+#include <queue>
+#include <stack>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <queue>
-#include <stack>
-#include "../util.h"
 #include "../node.h"
+#include "../util.h"
 
 
-struct SyntaxError { std::string msg; int line; };
+struct SyntaxError
+{
+    std::string msg;
+    int line;
+};
 
-class Parser {
+class Parser
+{
 public:
-    Parser(std::queue<Token>* in) : input(in) { output = parse(); delete input; }
+    Parser(std::queue<Token>* in)
+        : input(in)
+    {
+        output = parse();
+        delete input;
+    }
 
     Node* getTree() { return output; } // caller owns the tree
     std::string getString() { return getString(output); }
@@ -36,23 +46,23 @@ private:
     // one function per nonterminal, in grammar order
     Node* parseS();
     Node* parseProgram();
-    void  parseFunDecls(Node* parent);
+    void parseFunDecls(Node* parent);
     Node* parseFunDecl();
     Node* parseParamsOpt();
-    void  parseParams(Node* parent);
-    void  parseParamsTail(Node* parent);
+    void parseParams(Node* parent);
+    void parseParamsTail(Node* parent);
     Node* parseParam();
     Node* parseType();
     Node* parseBlock();
-    void  parseItems(Node* parent);
+    void parseItems(Node* parent);
     Node* parseItem();
     Node* parseDecl();
     Node* parseStmt();
     Node* parseStmtRest(Node* name);
     Node* parseElsePart();
-    void  parseArgsOpt(Node* parent);
-    void  parseArgs(Node* parent);
-    void  parseArgsTail(Node* parent);
+    void parseArgsOpt(Node* parent);
+    void parseArgs(Node* parent);
+    void parseArgsTail(Node* parent);
     Node* parseExp();
     Node* parseExpTail(Node* lhs);
     Node* parseAndExp();
@@ -72,7 +82,7 @@ private:
     bool holdsLeaf(const Node* n);
     std::string spell(Terminal k);
     std::string spell(const Token& t);
-   
+
     std::queue<Token>* input;
     Node* output;
 };

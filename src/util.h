@@ -1,8 +1,8 @@
 // File: util.h
 #pragma once
 #define DETAILED_ERRORS false
-#include <string>
 #include <iostream>
+#include <string>
 
 
 // extracts file name from path
@@ -10,9 +10,13 @@ inline std::string extractFileName(std::string path)
 {
     std::string fileName;
 
-    int end = path.size()-1;
-    while(end >= 0 && path[end] != '.') end--;
-    for(int i = 0; i < end; i++) fileName += path[i];
+    unsigned int end = path.size() - 1;
+
+    while (end >= 0 && path[end] != '.')
+        end--;
+
+    for (unsigned int i = 0; i < end; i++)
+        fileName += path[i];
 
     return fileName;
 }
@@ -20,7 +24,8 @@ inline std::string extractFileName(std::string path)
 
 inline void error(std::string s, int line)
 {
-    s = "error: line " + std::to_string(line) + ":" + (DETAILED_ERRORS ? " " + s : "") + "\n";
+    s = "error: line " + std::to_string(line) + ":" +
+        (DETAILED_ERRORS ? " " + s : "") + "\n";
 
     std::cerr << s;
     /*std::string errorFilePath = extractFileName(inputFilePath) + ".err";
@@ -34,6 +39,3 @@ inline void error(std::string s, int line)
 
     file.close();*/
 }
-
-
-

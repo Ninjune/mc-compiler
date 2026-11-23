@@ -2,6 +2,7 @@
 #include "astgraph.h"
 
 #ifdef BUILD_GRAPHVIZ
+
 #include <cstdio>
 #include <stack>
 #include <utility>
@@ -9,7 +10,7 @@
 std::string ASTGraph::labelFor(const Node* n)
 {
     std::string label = symToStr(n->symbol);
-    if(n->token.has_value())
+    if (n->token.has_value())
         label += "\\n" + n->token->value;
     return label;
 }
@@ -37,7 +38,7 @@ Agraph_t* ASTGraph::build(const Node* root)
         Agnode_t* gn = agnode(g, const_cast<char*>(name.c_str()), 1);
         agset(gn, const_cast<char*>("label"),
               const_cast<char*>(labelFor(n).c_str()));
-        if(isTerminal(n))
+        if (isTerminal(n))
         {
             agset(gn, const_cast<char*>("shape"), const_cast<char*>("box"));
             agset(gn, const_cast<char*>("style"), const_cast<char*>("filled"));
@@ -48,12 +49,12 @@ Agraph_t* ASTGraph::build(const Node* root)
     std::stack<std::pair<const Node*, Agnode_t*>> work;
     work.push({root, makeNode(root)});
 
-    while(!work.empty())
+    while (!work.empty())
     {
         auto [node, gnode] = work.top();
         work.pop();
 
-        for(const Node* c : node->children)
+        for (const Node* c : node->children)
         {
             Agnode_t* gc = makeNode(c);
             agedge(g, gnode, gc, nullptr, 1);
@@ -65,11 +66,16 @@ Agraph_t* ASTGraph::build(const Node* root)
 
 bool ASTGraph::writeDot(const Node* root, const std::string& path)
 {
-    if(root == nullptr) return false;
+    if (root == nullptr)
+        return false;
 
     Agraph_t* g = build(root);
     FILE* f = std::fopen(path.c_str(), "w");
-    if(f == nullptr) { agclose(g); return false; }
+    if (f == nullptr)
+    {
+        agclose(g);
+        return false;
+    }
 
     int rc = agwrite(g, f);
     std::fclose(f);
@@ -77,15 +83,17 @@ bool ASTGraph::writeDot(const Node* root, const std::string& path)
     return rc == 0;
 }
 
-bool ASTGraph::render(const Node* root, const std::string& path, const char* format)
+bool ASTGraph::render(const Node* root, const std::string& path,
+                      const char* format)
 {
-    if(root == nullptr) return false;
+    if (root == nullptr)
+        return false;
 
     GVC_t* gvc = gvContext();
     Agraph_t* g = build(root);
 
     int rc = gvLayout(gvc, g, "dot");
-    if(rc == 0)
+    if (rc == 0)
     {
         rc = gvRenderFilename(gvc, g, format, path.c_str());
         gvFreeLayout(gvc, g);
@@ -95,4 +103,4 @@ bool ASTGraph::render(const Node* root, const std::string& path, const char* for
     return rc == 0;
 }
 
-#endif 
+#endif

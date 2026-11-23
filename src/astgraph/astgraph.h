@@ -1,17 +1,18 @@
 // File: astgraph.h
 
-//#define BUILD_GRAPHVIZ
+// #define BUILD_GRAPHVIZ
 
 #ifdef BUILD_GRAPHVIZ
 
 #pragma once
-#include <string>
 #include <graphviz/gvc.h>
+#include <string>
 #include "../parser/parser.h"
 
 
 // render the tree for testing
-class ASTGraph {
+class ASTGraph
+{
 public:
     // Write Graphviz source to `path`. Returns false on I/O failure.
     static bool writeDot(const Node* root, const std::string& path);
