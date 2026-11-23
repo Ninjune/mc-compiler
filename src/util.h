@@ -12,7 +12,7 @@ inline std::string extractFileName(std::string path)
 
     unsigned int end = path.size() - 1;
 
-    while (end >= 0 && path[end] != '.')
+    while (end > 0 && path[end] != '.')
         end--;
 
     for (unsigned int i = 0; i < end; i++)
