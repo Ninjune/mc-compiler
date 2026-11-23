@@ -2,10 +2,12 @@
 #include <iostream>
 #include <string>
 #include <unordered_set>
+#include "ir/interp.h"
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "astgraph/astgraph.h"
 #include "typechkr/typechkr.h"
+#include "ir/ir.h"
 std::string parse_flag(char* arg);
 int tokens(std::string input_file);
 int tables();
@@ -218,8 +220,11 @@ int ir(std::string input_file)
     if(err)
         return 1;
 
-    // TODO: add ir stuff
+    auto* irprog = IR(tree).program();
 
+    std::cout << irprog->toString();
+
+    delete irprog;
     delete tree;
     return 0;
 }
@@ -241,8 +246,11 @@ int runir(std::string input_file)
     if(err)
         return 1;
 
-    // TODO: add ir stuff
+    auto* irprog = IR(tree).program();
 
+    IRInterp(*irprog).run();
+
+    delete irprog;
     delete tree;
 
     return 0;

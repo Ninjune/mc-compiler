@@ -25,25 +25,11 @@ private:
     static const std::string& idName(const Node* n) { return n->token->value; }
     static const char* name(Type t) { return t == Type::INT ? "int" : "bool"; }
 
-    Type record(Node* n, Type t) { return t; }
-
     static bool alwaysReturns(const Node* s);
-
-    static bool isT(const Node* n, Terminal t) 
-    {
-        auto* p = std::get_if<Terminal>(&n->symbol);
-        return p && *p == t;
-    }
-
-    static bool isNT(const Node* n, NonTerminal nt) 
-    {
-        auto* p = std::get_if<NonTerminal>(&n->symbol);
-        return p && *p == nt;
-    }
 
     static Type typeOf(const Node* typeNode) 
     {
-        return isT(typeNode, INT) ? Type::INT : Type::BOOL;
+        return typeNode->isSym(INT) ? Type::INT : Type::BOOL;
     }
 
     void expect(Node* e, Type want, const std::string& what) 

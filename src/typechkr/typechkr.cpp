@@ -159,43 +159,43 @@ void TypeChecker::checkStmt(Node* stmt)
 
 TypeChecker::Type TypeChecker::checkExp(Node* exp)
 {
-    if (isNT(exp, Call)) 
-        return record(exp, checkCall(exp));
+    if (exp->isSym(Call)) 
+        return checkCall(exp);
 
     auto* terminal = std::get_if<Terminal>(&exp->symbol);
     if (!terminal) fail(exp, "internal error: unexpected expression node");
 
     switch (*terminal) {
     case NUM:
-    case READ:  return record(exp, Type::INT);
+    case READ:  return Type::INT;
     case TRUE:
-    case FALSE: return record(exp, Type::BOOL);
+    case FALSE: return Type::BOOL;
     case IDENT: {
         auto t = vtable.lookup(idName(exp));
 
         if (!t)
             fail(exp, "undeclared variable '" + idName(exp) + "'");
 
-        return record(exp, *t);
+        return *t;
     }
     case NOT:
         expect(exp->children[0], Type::BOOL, "operand of '!'");
-        return record(exp, Type::BOOL);
+        return Type::BOOL;
     case MINUS:
         if (exp->children.size() == 1) 
         {
             expect(exp->children[0], Type::INT, "operand of unary '-'");
-            return record(exp, Type::INT);
+            return Type::INT;
         }
         [[fallthrough]];
     case PLUS: case STAR: case SLASH: case PERCENT:
         expect(exp->children[0], Type::INT, "left operand of arithmetic operator");
         expect(exp->children[1], Type::INT, "right operand of arithmetic operator");
-        return record(exp, Type::INT);
+        return Type::INT;
     case LT: case LE: case GT: case GE:
         expect(exp->children[0], Type::INT, "left operand of comparison");
         expect(exp->children[1], Type::INT, "right operand of comparison");
-        return record(exp, Type::BOOL);
+        return Type::BOOL;
     case EQ: case NE: {
         Type l = checkExp(exp->children[0]);
         Type r = checkExp(exp->children[1]);
@@ -203,12 +203,12 @@ TypeChecker::Type TypeChecker::checkExp(Node* exp)
         if (l != r)
             fail(exp, std::string("cannot compare ") + name(l) + " with " + name(r));
 
-        return record(exp, Type::BOOL);
+        return Type::BOOL;
     }
     case AND: case OR:
         expect(exp->children[0], Type::BOOL, "left operand of logical operator");
         expect(exp->children[1], Type::BOOL, "right operand of logical operator");
-        return record(exp, Type::BOOL);
+        return Type::BOOL;
     default: break;
     }
 
@@ -249,15 +249,15 @@ TypeChecker::Type TypeChecker::checkCall(Node* call)
 
 bool TypeChecker::alwaysReturns(const Node* s) 
 {
-    if (isT(s, RETURN)) 
+    if (s->isSym(RETURN)) 
         return true;
 
-    if (isT(s, IF))
+    if (s->isSym(IF))
         return s->children.size() == 3 &&
             alwaysReturns(s->children[1]) && 
             alwaysReturns(s->children[2]);
 
-    if (isNT(s, Block))
+    if (s->isSym(Block))
         return !s->children.empty() && alwaysReturns(s->children.back());
 
     return false;

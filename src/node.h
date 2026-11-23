@@ -16,6 +16,11 @@ public:
             delete children[i];
     }
 
+    bool isSym(Symbol a) const
+    {
+        return symbol == a;
+    }
+
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;
 

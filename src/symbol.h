@@ -133,6 +133,7 @@ std::string TToStr(Terminal t)
     }
     return "";
 }
+
 }
 
 inline std::string symToStr(Symbol s)
