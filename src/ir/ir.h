@@ -1,6 +1,6 @@
 #pragma once
-#include <cstdint>
 #include <string>
+#include <utility>
 #include <vector>
 #include "../stable.h"
 #include "../node.h"
@@ -29,7 +29,7 @@ struct Atom
         return a; 
     }
 
-    std::string str() const 
+    [[nodiscard]] std::string str() const 
     { 
         return isNum ? std::to_string(value) : var; 
     }
@@ -67,7 +67,7 @@ struct Instr
     { 
         Instr i(InstrKind::Move);
         i.dst = x; 
-        i.a = a; 
+        i.a = std::move(a); 
         return i; 
     }
 
@@ -75,7 +75,7 @@ struct Instr
     { 
         Instr i(InstrKind::Neg); 
         i.dst = x; 
-        i.a = a; 
+        i.a = std::move(a); 
         return i; 
     }
 
@@ -83,9 +83,9 @@ struct Instr
     { 
         Instr i(InstrKind::Bin); 
         i.dst = x; 
-        i.a = y; 
+        i.a = std::move(y); 
         i.bop = op; 
-        i.b = z; 
+        i.b = std::move(z); 
         return i; 
     }
 
@@ -101,9 +101,9 @@ struct Instr
     static Instr cond(Atom x, RelOp op, Atom y, const std::string& t, const std::string& f)
     { 
         Instr i(InstrKind::If);
-        i.a = x; 
+        i.a = std::move(x); 
         i.rop = op; 
-        i.b = y; 
+        i.b = std::move(y); 
         i.l1 = t; 
         i.l2 = f; 
         return i; 
@@ -119,7 +119,7 @@ struct Instr
     static Instr ret(Atom a)
     { 
         Instr i(InstrKind::Return);
-        i.a = a; 
+        i.a = std::move(a); 
         return i; 
     }
 };

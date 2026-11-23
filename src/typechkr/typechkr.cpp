@@ -1,5 +1,6 @@
 // File: typechkr.cpp
 #include "typechkr.h"
+#include "../util.h"
 
 
 void TypeChecker::run()
@@ -243,7 +244,6 @@ TypeChecker::Type TypeChecker::checkCall(Node* call)
                       name(params[i]) + " but is " + name(got));
     }
     return *ret;
-
 }
 
 

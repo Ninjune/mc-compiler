@@ -1,7 +1,6 @@
 // File: typechkr.h
 #pragma once
 #include "../node.h"
-#include "../util.h"
 
 struct TypeError {
     int line;

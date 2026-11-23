@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     argc--; // ignore first arg
     if(argc < 1)
     {
-        std::cerr << "Invalid arguments!" << std::endl;
+        std::cerr << "Invalid arguments!" << "\n";
 
         return 1;
     }
